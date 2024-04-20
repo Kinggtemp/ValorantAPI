@@ -1,0 +1,8 @@
+POST http://localhost:8081/agents
+Content-Type: application/json
+//this adds an object to our API
+
+{
+    "displayName": "Clove",
+
+}

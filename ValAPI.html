@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valorant Agents</title>
+    
+</head>
+<script>
+     async function getAgents() {
+            try {
+                //let response = await fetch('https://valorant-api.com/v1/agents/0e38b510-41a8-5780-5e8f-568b2a4f2d6c/');
+                let response = await fetch('http://localhost:8081/agents/Gekko');
+                let agent = await response.json();
+                document.getElementById("agentName").innerHTML = (agent.displayName);
+                document.getElementById("description") .innerHTML = (agent.description); 
+                document.getElementById("displayIcon") .src = (agent.displayIcon); 
+                agent.abilities.forEach(ability => {
+                    document.getElementById("ability1") .innerHTML += (ability.slot + "<br>" + ability.displayName + "<br>" + ability.description + "<br>" );
+                });
+           }
+           catch (e) {
+               console.log(e);
+           }
+        }
+        getAgents();
+</script>
+<body>
+
+<h2 id="agentName"></h2>
+
+<div id="description"></div>
+<img id="displayIcon">
+
+
+<div id="ability1"></div>
