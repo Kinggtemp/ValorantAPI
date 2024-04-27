@@ -1,8 +1,13 @@
-POST http://localhost:8081/agents
+POST http://localhost:8082/agents
 Content-Type: application/json
-//this adds an object to our API
 
 {
-    "displayName": "Clove",
-
+  "name": "Agent Sage",
+  "role": "Sentinel",
+  "abilities": [
+    "Barrier Orb",
+    "Healing Orb",
+    "Slow Orb",
+    "Resurrection"
+  ]
 }
