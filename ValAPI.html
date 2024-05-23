@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -12,13 +12,13 @@
     async function getAgents() {
         try {
             //let response = await fetch('https://valorant-api.com/v1/agents/0e38b510-41a8-5780-5e8f-568b2a4f2d6c/');
-            let response = await fetch('http://localhost:8081/agents/Killjoy');
+            let response = await fetch('http://localhost:8081/agents/Reyna');
             let agent = await response.json();
             document.getElementById("agentName").innerHTML = (agent.displayName);
             document.getElementById("description").innerHTML = (agent.description);
             document.getElementById("displayIcon").src = (agent.displayIcon);
             agent.abilities.forEach(ability => {
-                document.getElementById("ability1").innerHTML += (ability.slot + "<br>" + ability.displayIcon + "<br>" + ability.displayName + "<br>" + ability.description + "<br>");
+                document.getElementById("ability1").innerHTML += (ability.slot + "<br>" + "<br>" + ability.displayName + "<br>" + ability.description + "<br>");
             });
         }
         catch (e) {
@@ -36,232 +36,56 @@
     <div id="description"></div>
     <img id="displayIcon">
 
-
-
     <div id="ability1"></div>
 
     <div class="dropdown">
-    <select id="agents">
-        <option value="">Select agents...</option>
-      </select>
+        <label for="agents"></label>
+        <select name="agents" id="agentDropdown">
+          <option value="">-- Select an Agent --</option>
+        </select>
+      </div>
+    
+      <script>
+        async function fetchAgentsFromAPI() {
+          try {
+            const response = await fetch('agents.json');
+            const agents = await response.json();
+            return agents;
+          } catch (error) {
+            console.error('Error fetching agents:', error);
+          }
+        }
+    
+        async function populateDropdown() {
+          const dropdown = document.getElementById('agentDropdown');
+          const agents = await fetchAgentsFromAPI();
+    
+          // Clear existing options
+          dropdown.innerHTML = '<option value="">-- Select an Agent --</option>';
+    
+          // Add new options
+          agents.forEach(agent => {
+            const option = document.createElement('option');
+            option.value = agent.id;
+            option.text = agent.displayName;
+            dropdown.add(option);
+          });
+        }
+    
+        window.onload = populateDropdown;
 
-      <label for="agentnames">Choose an agent</label>
-<select name="agentnames" id="agentnames">
-    <option value="Select agents">Select agents...</option>
-  <option value="Gekko">Gekko</option>
-  <option value="pumpernickel">Pumpernickel</option>
-  <option value="reeses">Reeses</option>
-</select>
-    </div>  
-
-</body>
-
-<script>
-document.getElementById('addAgentForm').addEventListener('submit', async (event) => {
-    event.preventDefault(); 
-    const formData = new FormData(event.target);
-    const agentData = {};
-    formData.forEach((value, key) => {
-        agentData[key] = value;
-    });
-    try {
-          const response = await fetch('agents.json', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(agentData)
+        const dropdown = document.getElementById('agentDropdown');
+        dropdown.addEventListener('change', async function() {
+          const selectedAgentId = this.value;
+          if (selectedAgentId) {
+            const response = await fetch(`http://localhost:8081/agents/${selectedAgentId}`);
+            const agent = await response.json();
+            // Update the HTML elements with the selected agent's data
+            document.getElementById('agentName').textContent = agent.displayName;
+            document.getElementById('description').textContent = agent.description;
+            // ... update other elements as needed
+          }
         });
-        if (response.ok) {
-            alert('Agent added successfully!');
-
-        } else {
-            throw new Error('Failed to add agent');
-        }
-    } catch (error) {
-        console.error('Error adding agent:', error);
-    }
-});
-</script> -->
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Valorant Agents</title>
-
-    <link rel="stylesheet" href="ValAPI.css">
-</head>
-<script>
-     async function getAgents() {
-            try {
-                let response = await fetch('agents.json');
-                let agent = await response.json();
-                document.getElementById("agentName").innerHTML = (agent.data.displayName);
-                document.getElementById("description") .innerHTML = (agent.data.description); 
-                document.getElementById("displayIcon") .src = (agent.data.displayIcon); 
-                agent.data.abilities.forEach(ability => {
-                    document.getElementById("ability1") .innerHTML += (ability.slot + "<br>" + ability.displayName + "<br>" + ability.description + "<br>" );
-                });
-           }
-           catch (e) {
-               console.log(e);
-           }
-        }
-        getAgents();
-</script>
-<body>
-    
-<h2 id="agentName"></h2>
-
-<div id="description"></div>
-<img id="displayIcon">
-
-
-<div id="ability1"></div>
-
-
-  
-
-
-  <select id="agents">
-    <option value="">Select agents...</option>
-  </select>
-  
- <!-- DELETE Button -->
-<button onclick="deleteAgent()">Delete Agent</button>
-
-<!-- POST Form -->
-<form id="addAgentForm">
-    <input type="text" id="newAgentName" placeholder="Agent Name">
-    <input type="text" id="newAgentDescription" placeholder="Agent Description">
- 
-    <button type="submit">Add Agent</button>
-</form>
-
-<script>
-    async function deleteAgent() {
-        const selectedAgentId = document.getElementById('agents').value;
-        try {
-            const response = await fetch(`agents.json${selectedAgentId}`, {
-                method: 'DELETE'
-            });
-            if (response.ok) {
-                alert('Agent deleted successfully!');
-               
-            } else {
-                throw new Error('Failed to delete agent');
-            }
-        } catch (error) {
-            console.error('Error deleting agent:', error);
-        }
-    }
-
-    document.getElementById('addAgentForm').addEventListener('submit', async (event) => {
-        event.preventDefault(); 
-        const formData = new FormData(event.target);
-        const agentData = {};
-        formData.forEach((value, key) => {
-            agentData[key] = value;
-        });
-        try {
-            //const response = await fetch('https://valorant-api.com/v1/agents', {
-              const response = await fetch('agents.json', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(agentData)
-            });
-            if (response.ok) {
-                alert('Agent added successfully!');
-              
-            } else {
-                throw new Error('Failed to add agent');
-            }
-        } catch (error) {
-            console.error('Error adding agent:', error);
-        }
-    });
-</script>
-  
-  
-
-  <script>
-    function fetchData() {
-      //fetch('https://valorant-api.com/v1/agents')
-      fetch('agents.json')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        const dropdown = document.getElementById('agents');
-        data.forEach(agent => {
-          const option = document.createElement('option');
-          option.value = agent.displayName; 
-          option.textContent = agent.displayName; 
-          dropdown.appendChild(option);
-        });
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-    }
-  
-    window.onload = fetchData;
-  
-    
-    function fetchAgentDetails(agentId) {
-    return fetch('agents.json' + agentId)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      });
-  }
-
-
-  const dropdown = document.getElementById('agents');
-
-  dropdown.addEventListener('change', function() {
-    
-    const selectedAgentId = this.value;
-    console.log('Selected Agent ID:', selectedAgentId);
-   
-    const strUser = dropdown.options[dropdown.selectedIndex].text;
-      console.log('Selected text:', strUser);
-
-   
-  
-  fetchAgentDetails(selectedAgentId)
-      .then(agentDetails => {
-        console.log('Agent Details:', agentDetails);
-  
-        updatePageWithAgentDetails(agentDetails.data);
-      })
-      .catch(error => {
-        console.error('Error fetching agent details:', error);
-      });
-  });
-
-  function updatePageWithAgentDetails(agentDetails) {
-    console.log('Updating page with agent details:', agentDetails);
-    
-    document.getElementById('agentName').innerHTML = agentDetails.displayName;
-    document.getElementById('displayIcon').src = agentDetails.displayIcon;
-    document.getElementById('description').innerHTML = agentDetails.description;
-    document.getElementById("ability1") .innerHTML = "";
-    agentDetails.abilities.forEach(ability => {
-                    document.getElementById("ability1") .innerHTML += (ability.slot + "<br>" + ability.displayName + "<br>" + ability.description + "<br>" );
-                });
-
-  }
-</script>
-
-</body>
-</html>
+      </script>
+    </body>
+    </html>

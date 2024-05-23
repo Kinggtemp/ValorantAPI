@@ -75,20 +75,20 @@ app.post('/agents', function (req, res) {
 app.put('/agents', function (req, res) {
   var updatedAgent = req.body
   fs.readFile('agents.json', 'utf8',
-      function (err, data) {
-          valorantReponse = JSON.parse(data)
-          for (var i = 0; i < valorantReponse.data.length; i++) {
-              if (valorantReponse.data[i].displayName == updatedAgent.displayName) {
-                  valorantReponse.data[i] = updatedAgent
-              }
-          }
-          res.end(JSON.stringify(data))
-          fs.writeFile('agents.json',
-              JSON.stringify(valorantReponse), function
-              (err) {
-              if (err) { return console.log(err) }
-          })
+    function (err, data) {
+      valorantReponse = JSON.parse(data)
+      for (var i = 0; i < valorantReponse.data.length; i++) {
+        if (valorantReponse.data[i].displayName == updatedAgent.displayName) {
+          valorantReponse.data[i] = updatedAgent
+        }
+      }
+      res.end(JSON.stringify(data))
+      fs.writeFile('agents.json',
+        JSON.stringify(valorantReponse), function
+        (err) {
+        if (err) { return console.log(err) }
       })
+    })
   res.end('Agent has been updated')
 })
 
